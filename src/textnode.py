@@ -4,17 +4,18 @@ class TextNode():
         self.text_type = text_type
         self.url = url
     
-    def __eg__(self, target):
-        if (self.text == target.text and
-            self.text_type == target.text_type and
-            self.url == target.url)
+    def __eq__(node1, node2):
+        if (node1.text == node2.text and
+            node1.text_type == node2.text_type and
+            node1.url == node2.url):
+            print("true")
             return True
         else: 
-            return False
+            print("false")
+            return True
     
     def __repr__(self):
         return f"TextNode({self.text}, {self.text_type}, {self.url})"
 
 def main():
-    TextNode("This is a text node", "bold", https://www.boot.dev)
-    
+    TextNode("This is a text node", "bold", "https://www.boot.dev")
