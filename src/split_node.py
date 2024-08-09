@@ -34,9 +34,16 @@ def split_nodes_links(old_nodes):
         for link in links:   
             for lnk in link:
                 split.append(TextNode(old_node.text.split(f"[{lnk[0]}]({lnk[1]})")[0], old_node.text_type))
+                left_over = TextNode(old_node.text.split(f"[{lnk[0]}]({lnk[1]})")[1], old_node.text_type)
                 old_node.text = old_node.text.replace(split[-1].text, "")
                 split.append(TextNode(lnk[0], "link", lnk[1]))
                 old_node.text = old_node.text.replace(f"[{lnk[0]}]({lnk[1]})", "")
+                if left_over.text != "":
+                    split.append(left_over)
+
+    for spl in split:
+        print(spl.text)
+    print("\n")
     return split
 
 # images/links = list of lists of the extracted images/links
@@ -50,12 +57,20 @@ def split_nodes_images(old_nodes):
         images.append(extract_markdown_images(old_node.text))
         if images == [[]]:
             split.append(old_node)
-        for image in images:   
-            for img in image:
-                split.append(TextNode(old_node.text.split(f"![{img[0]}]({img[1]})")[0], old_node.text_type))
-                old_node.text = old_node.text.replace(split[-1].text, "")
-                split.append(TextNode(img[0], "image", img[1]))
-                old_node.text = old_node.text.replace(f"![{img[0]}]({img[1]})", "")
+        else:
+            for image in images:   
+                for img in image:
+                    split.append(TextNode(old_node.text.split(f"![{img[0]}]({img[1]})")[0], old_node.text_type))
+                    left_over = TextNode(old_node.text.split(f"[{img[0]}]({img[1]})")[1], old_node.text_type)
+                    old_node.text = old_node.text.replace(split[-1].text, "")
+                    split.append(TextNode(img[0], "image", img[1]))
+                    old_node.text = old_node.text.replace(f"![{img[0]}]({img[1]})", "")
+                    if left_over.text != "":
+                        split.append(left_over)
+
+    for spl in split:
+        print(spl.text)
+    print("\n")
     return split
 
 def text_to_textnodes(text):
