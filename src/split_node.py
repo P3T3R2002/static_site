@@ -40,10 +40,6 @@ def split_nodes_links(old_nodes):
                 old_node.text = old_node.text.replace(f"[{lnk[0]}]({lnk[1]})", "")
                 if left_over.text != "":
                     split.append(left_over)
-
-    for spl in split:
-        print(spl.text)
-    print("\n")
     return split
 
 # images/links = list of lists of the extracted images/links
@@ -67,10 +63,6 @@ def split_nodes_images(old_nodes):
                     old_node.text = old_node.text.replace(f"![{img[0]}]({img[1]})", "")
                     if left_over.text != "":
                         split.append(left_over)
-
-    for spl in split:
-        print(spl.text)
-    print("\n")
     return split
 
 def text_to_textnodes(text):
