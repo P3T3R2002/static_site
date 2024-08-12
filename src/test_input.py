@@ -6,8 +6,9 @@ class TestInput(unittest.TestCase):
         if True:
             with open("./src/markdown_input.md") as f:
                 file_contents = f.read()
-            markdown_to_html(file_contents)
-
+            htmlnodes = markdown_to_html(file_contents)
+            for htmlnode in htmlnodes:
+                print("////\n", htmlnode.to_html())
 
 if __name__ == "__main__":
     unittest.main()

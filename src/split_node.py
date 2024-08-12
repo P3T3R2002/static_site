@@ -65,11 +65,34 @@ def split_nodes_images(old_nodes):
                         split.append(left_over)
     return split
 
-def text_to_textnodes(text):
+def text_to_textnodes(text, list_type = None):
     split = [TextNode(text, "text")]
-    split = split_nodes_delimiter(split, "**", "bold")
-    split = split_nodes_delimiter(split, "*", "italic")
-    split = split_nodes_delimiter(split, "`", "code")
-    split = split_nodes_images(split)
-    split = split_nodes_links(split)
+    if list_type == "ordered_list":
+        split = split_ordered(split)
+    elif list_type == "unordered_list":
+            split = split_unordered(split)     
+    else:
+        split = split_nodes_delimiter(split, "**", "bold")
+        split = split_nodes_delimiter(split, "*", "italic")
+        split = split_nodes_delimiter(split, "`", "code")
+        split = split_nodes_images(split)
+        split = split_nodes_links(split)
     return split
+
+def split_unordered(old_node):
+    new_node = []
+    split = old_node[0].text.split("\n")
+    for text in split:
+        if text != "":
+            new_node.append(TextNode(text.strip("*").strip("-").strip(), old_node[0].text_type))
+    return new_node
+
+def split_ordered(old_node):
+    i = 1
+    new_node = []
+    split = old_node[0].text.split("\n")
+    for text in split:
+        if text != "":
+            new_node.append(TextNode(text.strip("{i}.").strip(), old_node[0].text_type))
+            i += 1
+    return new_node

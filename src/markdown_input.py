@@ -65,6 +65,42 @@ def unordered(block, pre):
         else:
             raise Exception("The unordered list is wrong")
 
+def block_to_html(blocks):
+    list_of_htmlnode = []
+    list_of_textnodes = []
+    for block in blocks:
+        list_of_textnodes.append((text_to_textnodes(block[0], block[1]), block[1]))
+    for textnodes in list_of_textnodes:
+        match(textnodes[1].split(" ")[0]):
+            case("heading"):
+                textnodes[0][0].text = textnodes[0][0].text.strip("#").strip()
+                list_of_htmlnode.append(textnodes[0][0].text_node_to_html_node(f"h{textnodes[1].split(' ')[1]}"))
+            case("paragraph"):
+                list_of_htmlnode.append(ParentNode("p", get_list_of_children(textnodes[0])))
+            case("code"):
+                list_of_htmlnode.append(ParentNode("pre", [LeafNode("code", textnodes[0][0].text)]))
+            case("quote"):
+                textnodes[0][0].text = textnodes[0][0].text.strip(">").strip()
+                list_of_htmlnode.append(LeafNode("blockquote", textnodes[0][0].text.strip(">")))
+            case("unordered_list"):
+                for item in textnodes[0]:
+                    item.text = item.text.strip("*").strip("-").strip("*").strip()
+                list_of_htmlnode.append(ParentNode("ul", get_list_of_children(textnodes[0], "li")))
+            case("ordered_list"):
+                i = 1
+                for item in textnodes[0]:
+                    item.text = item.text.strip(f"{i}.").strip()
+                    i += 1
+                list_of_htmlnode.append(ParentNode("ol", get_list_of_children(textnodes[0], "li")))
+            case _:
+                raise Exception("wrong text type in block to html")      
+    return list_of_htmlnode
+
+def get_list_of_children(lst, unique = None):
+    children = []
+    for item in lst:
+        children.append(item.text_node_to_html_node(unique))
+    return children
 
 def markdown_to_html(markdown):
     block_and_type = []
@@ -72,20 +108,7 @@ def markdown_to_html(markdown):
     for block in blocks:
         block_type = block_to_block_type(block)
         block_and_type.append((block, block_type))
-    block_to_html(block_and_type)
-
-def block_to_html(blocks):
-    list_of_textnodes = []
-    list_of_nodes = []
-    for block in blocks:
-        list_of_textnodes.append(text_to_textnodes(block[0]))
-        print(list_of_textnodes[-1:])
-    
-    for textnodes in list_of_textnodes:
-        if len(textnodes) == 1:
-            pass
-
-
+    return block_to_html(block_and_type)
 
 
 

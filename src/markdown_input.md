@@ -28,7 +28,7 @@
 - This is a list item
 * This is another list item
 
-       1. ez nem egy sorrend
+       1. ez is egy sorrend
 2. emiatt
 
      1 ez egy paragraph
