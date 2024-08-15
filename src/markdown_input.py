@@ -69,29 +69,41 @@ def block_to_html(blocks):
     list_of_htmlnode = []
     list_of_textnodes = []
     for block in blocks:
-        list_of_textnodes.append((text_to_textnodes(block[0], block[1]), block[1]))
+        split = text_to_textnodes(block[0], block[1])
+        new_split = []
+        
+        for node in split:
+            textnodes = text_to_textnodes(node.text)
+            
+            if len(textnodes) != 1:
+                new_split.append(textnodes)
+            else: new_split.append(node)
+        print("****\n", new_split)
+        list_of_textnodes.append((new_split, block[1]))
+    
     for textnodes in list_of_textnodes:
         match(textnodes[1].split(" ")[0]):
             case("heading"):
-                textnodes[0][0].text = textnodes[0][0].text.strip("#").strip()
+                textnodes[0][0].text = textnodes[0][0].text.lstrip("#").strip()
                 list_of_htmlnode.append(textnodes[0][0].text_node_to_html_node(f"h{textnodes[1].split(' ')[1]}"))
+            
             case("paragraph"):
                 list_of_htmlnode.append(ParentNode("p", get_list_of_children(textnodes[0])))
+            
             case("code"):
                 list_of_htmlnode.append(ParentNode("pre", [LeafNode("code", textnodes[0][0].text)]))
+            
             case("quote"):
-                textnodes[0][0].text = textnodes[0][0].text.strip(">").strip()
+                textnodes[0][0].text = textnodes[0][0].text.lstrip(">").strip()
                 list_of_htmlnode.append(LeafNode("blockquote", textnodes[0][0].text.strip(">")))
+            
             case("unordered_list"):
-                for item in textnodes[0]:
-                    item.text = item.text.strip("*").strip("-").strip("*").strip()
                 list_of_htmlnode.append(ParentNode("ul", get_list_of_children(textnodes[0], "li")))
+                print("-----\n", textnodes[0])
+            
             case("ordered_list"):
-                i = 1
-                for item in textnodes[0]:
-                    item.text = item.text.strip(f"{i}.").strip()
-                    i += 1
                 list_of_htmlnode.append(ParentNode("ol", get_list_of_children(textnodes[0], "li")))
+            
             case _:
                 raise Exception("wrong text type in block to html")      
     return list_of_htmlnode
@@ -99,7 +111,11 @@ def block_to_html(blocks):
 def get_list_of_children(lst, unique = None):
     children = []
     for item in lst:
-        children.append(item.text_node_to_html_node(unique))
+        if isinstance(item, list):
+            ch = get_list_of_children(item)
+            children.append(ParentNode(unique, ch))
+        else:
+            children.append(item.text_node_to_html_node(unique))
     return children
 
 def markdown_to_html(markdown):

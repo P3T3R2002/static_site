@@ -5,24 +5,24 @@ from textnode import *
 def extract_markdown_images(text):
     return re.findall(r"!\[(.*?)\]\((.*?)\)", text)
 
-
 def extract_markdown_links(text):
     return re.findall(r"(?<!!)\[(.*?)\]\((.*?)\)", text)
-
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     new_node = []
     for old_node in old_nodes:
         current_type = old_node.text_type
         split = old_node.text.split(delimiter)
-        for text in split:
-            if text != "":
-                new_node.append(TextNode(text, current_type))
+        if len(split) != 1:
+            for text in split:
+                new_node.append(TextNode(text, current_type)) 
                 if current_type == text_type:
                     current_type = old_node.text_type
-                else:current_type = text_type       
+                else:current_type = text_type  
+                if new_node[-1].text == "":
+                    trash = new_node.pop() 
+        else: new_node.append(old_node)   
     return new_node
-
 
 def split_nodes_links(old_nodes):
     split = []
@@ -84,7 +84,7 @@ def split_unordered(old_node):
     split = old_node[0].text.split("\n")
     for text in split:
         if text != "":
-            new_node.append(TextNode(text.strip("*").strip("-").strip(), old_node[0].text_type))
+            new_node.append(TextNode(text.lstrip("*").lstrip("-").strip(), old_node[0].text_type))
     return new_node
 
 def split_ordered(old_node):
@@ -93,6 +93,6 @@ def split_ordered(old_node):
     split = old_node[0].text.split("\n")
     for text in split:
         if text != "":
-            new_node.append(TextNode(text.strip("{i}.").strip(), old_node[0].text_type))
+            new_node.append(TextNode(text.lstrip(f"{i}.").strip(), old_node[0].text_type))
             i += 1
     return new_node
