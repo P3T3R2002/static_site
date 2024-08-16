@@ -47,7 +47,6 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
     
     directorys = os.listdir(path = dir_path_content)
     for directory in directorys:
-        print("////", directory)
         src_pointer = os.path.join(dir_path_content, directory)
         if os.path.isfile(src_pointer):
             dst_pointer = os.path.join(dest_dir_path, f"{directory.split('.')[0]}.html")

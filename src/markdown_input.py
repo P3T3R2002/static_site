@@ -98,7 +98,7 @@ def block_to_html(blocks):
             
             case("quote"):
                 textnodes[0][0].text = textnodes[0][0].text.lstrip(">").strip()
-                list_of_htmlnode.append(LeafNode("blockquote", textnodes[0][0].text.strip(">")))
+                list_of_htmlnode.append(LeafNode("blockquote", textnodes[0][0].text.replace(">", "")))
             
             case("unordered_list"):
                 list_of_htmlnode.append(ParentNode("ul", get_list_of_children(textnodes[0], "li")))
