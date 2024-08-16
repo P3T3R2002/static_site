@@ -33,7 +33,7 @@ class TextNode():
                 case("link"):
                     return LeafNode("a", self.text, {"href":self.url})
                 case("image"):
-                    return LeafNode("img", "", {"scr":self.url, "alt":self.text})
+                    return LeafNode("img", "", {"src":self.url, "alt":self.text})
                 case _:
                     raise Exception("Wrong type")
         else:

@@ -78,15 +78,18 @@ def block_to_html(blocks):
             if len(textnodes) != 1:
                 new_split.append(textnodes)
             else: new_split.append(node)
-        print("****\n", new_split)
         list_of_textnodes.append((new_split, block[1]))
     
     for textnodes in list_of_textnodes:
         match(textnodes[1].split(" ")[0]):
             case("heading"):
-                textnodes[0][0].text = textnodes[0][0].text.lstrip("#").strip()
-                list_of_htmlnode.append(textnodes[0][0].text_node_to_html_node(f"h{textnodes[1].split(' ')[1]}"))
-            
+                for textnode in textnodes[0]:
+                    textnode.text = textnode.text.lstrip("#").strip()
+                if len(textnodes[0]) == 1:
+                    list_of_htmlnode.append(textnodes[0][0].text_node_to_html_node(f"h{textnodes[1].split(' ')[1]}"))
+                else:
+                   list_of_htmlnode.append(ParentNode(f"h{textnodes[1].split(' ')[1]}", get_list_of_children(textnodes[0]))) 
+
             case("paragraph"):
                 list_of_htmlnode.append(ParentNode("p", get_list_of_children(textnodes[0])))
             
@@ -99,7 +102,6 @@ def block_to_html(blocks):
             
             case("unordered_list"):
                 list_of_htmlnode.append(ParentNode("ul", get_list_of_children(textnodes[0], "li")))
-                print("-----\n", textnodes[0])
             
             case("ordered_list"):
                 list_of_htmlnode.append(ParentNode("ol", get_list_of_children(textnodes[0], "li")))

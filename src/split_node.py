@@ -77,6 +77,7 @@ def text_to_textnodes(text, list_type = None):
         split = split_nodes_delimiter(split, "`", "code")
         split = split_nodes_images(split)
         split = split_nodes_links(split)
+    
     return split
 
 def split_unordered(old_node):
